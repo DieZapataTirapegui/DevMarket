@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: devmarket_db
+    restart: always
+    environment:
+      POSTGRES_USER: devmarket
+      POSTGRES_PASSWORD: devmarket
+      POSTGRES_DB: devmarket
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
