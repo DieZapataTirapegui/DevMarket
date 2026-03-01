@@ -1,0 +1,186 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+import { Cart } from './entities/cart.entity';
+import { CartItem } from '../cart-items/entities/cart-item.entity';
+import { Product } from '../products/entities/product.entity';
+import { User } from '../users/entities/user.entity';
+import { Order } from '../orders/entities/order.entity';
+import { OrderItem } from '../orders/entities/order-item.entity';
+
+@Injectable()
+export class CartService {
+
+  constructor(
+    @InjectRepository(Cart)
+    private readonly cartRepository: Repository<Cart>,
+
+    @InjectRepository(CartItem)
+    private readonly cartItemRepository: Repository<CartItem>,
+
+    @InjectRepository(Product)
+    private readonly productRepository: Repository<Product>,
+
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+
+    @InjectRepository(Order)
+    private readonly orderRepository: Repository<Order>,
+    
+    @InjectRepository(OrderItem)
+    private readonly orderItemRepository: Repository<OrderItem>,
+  ) {}
+
+  async addToCart(userId: number, productId: number, quantity: number) {
+
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+    });
+
+    if (!user) throw new NotFoundException('User not found');
+
+    const product = await this.productRepository.findOne({
+      where: { id: productId },
+    });
+
+    if (!product) throw new NotFoundException('Product not found');
+
+    let cart = await this.cartRepository.findOne({
+      where: { user: { id: userId }, isActive: true },
+      relations: ['items', 'items.product'],
+    });
+
+    if (!cart) {
+      cart = this.cartRepository.create({
+        user,
+        isActive: true,
+      });
+
+      await this.cartRepository.save(cart);
+    }
+
+    let cartItem = cart.items?.find(
+      (item) => item.product.id === productId,
+    );
+
+    if (cartItem) {
+      cartItem.quantity += quantity;
+    } else {
+      cartItem = this.cartItemRepository.create({
+        cart,
+        product,
+        quantity,
+      });
+
+      await this.cartItemRepository.save(cartItem);
+    }
+
+    return this.cartRepository.findOne({
+      where: { id: cart.id },
+      relations: ['items', 'items.product'],
+    });
+  }
+
+  async getActiveCart(userId: number) {
+    const cart = await this.cartRepository.findOne({
+      where: { user: { id: userId }, isActive: true },
+      relations: ['items', 'items.product'],
+    });
+  
+    if (!cart) {
+      throw new NotFoundException('Active cart not found');
+    }
+  
+    const itemsWithSubtotal = cart.items.map((item) => {
+      const price = Number(item.product.price);
+      const subtotal = price * item.quantity;
+  
+      return {
+        id: item.id,
+        product: item.product,
+        quantity: item.quantity,
+        subtotal,
+      };
+    });
+  
+    const total = itemsWithSubtotal.reduce(
+      (acc, item) => acc + item.subtotal,
+      0,
+    );
+  
+    const totalItems = itemsWithSubtotal.reduce(
+      (acc, item) => acc + item.quantity,
+      0,
+    );
+  
+    return {
+      id: cart.id,
+      items: itemsWithSubtotal,
+      totalItems,
+      total,
+      createdAt: cart.createdAt,
+      updatedAt: cart.updatedAt,
+    };
+  }
+
+  async removeProduct(userId: number, productId: number) {
+    const cart = await this.cartRepository.findOne({
+      where: { user: { id: userId }, isActive: true },
+      relations: ['items', 'items.product'],
+    });
+  
+    if (!cart) throw new NotFoundException('Cart not found');
+  
+    const item = cart.items.find(
+      (item) => item.product.id === productId,
+    );
+  
+    if (!item) throw new NotFoundException('Product not in cart');
+  
+    await this.cartItemRepository.remove(item);
+  
+    return this.getActiveCart(userId);    
+  }
+
+  async checkout(userId: number) {
+    const cart = await this.cartRepository.findOne({
+      where: { user: { id: userId }, isActive: true },
+      relations: ['items', 'items.product', 'user'],
+    });
+  
+    if (!cart || cart.items.length === 0) {
+      throw new NotFoundException('Cart is empty');
+    }
+  
+    let total = 0;
+  
+    const orderItems = cart.items.map((item) => {
+      const price = Number(item.product.price);
+      total += price * item.quantity;
+  
+      return this.orderItemRepository.create({
+        product: item.product,
+        quantity: item.quantity,
+        priceAtPurchase: price,
+      });
+    });
+  
+    const order = this.orderRepository.create({
+      user: cart.user,
+      items: orderItems,
+      total,
+    });
+  
+    await this.orderRepository.save(order);
+  
+    cart.isActive = false;
+    await this.cartRepository.save(cart);
+  
+    return {
+      message: 'Checkout successful',
+      orderId: order.id,
+      total,
+    };
+  }
+}

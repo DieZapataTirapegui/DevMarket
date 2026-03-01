@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
+import { Cart } from '../../cart/entities/cart.entity';
 
 export enum UserRole {
   USER = 'USER',
@@ -22,4 +23,7 @@ export class User {
     default: UserRole.USER,
   })
   role: UserRole;
+
+  @OneToOne(() => Cart, (cart) => cart.user)
+  cart: Cart;
 }
