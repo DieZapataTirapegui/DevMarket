@@ -14,9 +14,9 @@ export class Order {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, (user) => user.orders)
   user: User;
-
+  
   @OneToMany(() => OrderItem, (item) => item.order, {
     cascade: true,
   })

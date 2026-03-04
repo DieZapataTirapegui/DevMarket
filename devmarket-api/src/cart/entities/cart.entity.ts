@@ -1,7 +1,7 @@
 import {
   Entity,
   PrimaryGeneratedColumn,
-  OneToOne,
+  ManyToOne,
   OneToMany,
   JoinColumn,
   Column,
@@ -16,7 +16,7 @@ export class Cart {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => User, (user) => user.cart)
+  @ManyToOne(() => User, (user) => user.carts)
   @JoinColumn()
   user: User;
 

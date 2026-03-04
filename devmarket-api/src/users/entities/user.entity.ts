@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Cart } from '../../cart/entities/cart.entity';
+import { Order } from '../../orders/entities/order.entity';
 
 export enum UserRole {
   USER = 'USER',
@@ -24,6 +25,9 @@ export class User {
   })
   role: UserRole;
 
-  @OneToOne(() => Cart, (cart) => cart.user)
-  cart: Cart;
+  @OneToMany(() => Cart, (cart) => cart.user)
+  carts: Cart[];
+
+  @OneToMany(() => Order, (order) => order.user)
+  orders: Order[];
 }

@@ -11,6 +11,7 @@ import {
 import type { Request } from 'express';
 import { CartService } from './cart.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { AddToCartDto } from './dto/add-to-cart.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('cart')
@@ -20,16 +21,21 @@ export class CartController {
   @Post('add')
   addToCart(
     @Req() req: Request,
-    @Body('productId') productId: number,
-    @Body('quantity') quantity: number,
+    @Body() dto: AddToCartDto,
   ) {
-    const userId = (req.user as any).id;
-    return this.cartService.addToCart(userId, productId, quantity);
+  
+    const userId = (req.user as any).userId;
+  
+    return this.cartService.addToCart(
+      userId,
+      dto.productId,
+      dto.quantity,
+    );
   }
 
   @Get('me')
   getMyCart(@Req() req: Request) {
-    const userId = (req.user as any).id;
+    const userId = (req.user as any).userId;
     return this.cartService.getActiveCart(userId);
   }
 
@@ -38,13 +44,13 @@ export class CartController {
     @Req() req: Request,
     @Param('productId') productId: string,
   ) {
-    const userId = (req.user as any).id;
+    const userId = (req.user as any).userId;
     return this.cartService.removeProduct(userId, +productId);
   }
 
   @Post('checkout')
   checkout(@Req() req: Request) {
-    const userId = (req.user as any).id;
+    const userId = (req.user as any).userId;
     return this.cartService.checkout(userId);
   }
 }

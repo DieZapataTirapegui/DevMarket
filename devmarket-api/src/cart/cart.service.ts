@@ -8,6 +8,7 @@ import { Product } from '../products/entities/product.entity';
 import { User } from '../users/entities/user.entity';
 import { Order } from '../orders/entities/order.entity';
 import { OrderItem } from '../orders/entities/order-item.entity';
+import { InternalServerErrorException } from '@nestjs/common/exceptions/internal-server-error.exception';
 
 @Injectable()
 export class CartService {
@@ -33,53 +34,91 @@ export class CartService {
   ) {}
 
   async addToCart(userId: number, productId: number, quantity: number) {
-
     const user = await this.userRepository.findOne({
       where: { id: userId },
     });
-
+  
     if (!user) throw new NotFoundException('User not found');
-
+  
     const product = await this.productRepository.findOne({
       where: { id: productId },
     });
-
+  
     if (!product) throw new NotFoundException('Product not found');
-
+  
     let cart = await this.cartRepository.findOne({
       where: { user: { id: userId }, isActive: true },
       relations: ['items', 'items.product'],
     });
-
+  
+    // Si no existe carrito activo, lo creamos
     if (!cart) {
-      cart = this.cartRepository.create({
+      const newCart = this.cartRepository.create({
         user,
         isActive: true,
       });
-
-      await this.cartRepository.save(cart);
+  
+      await this.cartRepository.save(newCart);
+  
+      cart = await this.cartRepository.findOne({
+        where: { id: newCart.id },
+        relations: ['items', 'items.product'],
+      });
     }
-
-    let cartItem = cart.items?.find(
+  
+    if (!cart) {
+      throw new InternalServerErrorException('Cart creation failed');
+    }
+  
+    // Si items es undefined (primer uso), lo inicializamos
+    if (!cart.items) {
+      cart.items = [];
+    }
+  
+    let cartItem = cart.items.find(
       (item) => item.product.id === productId,
     );
-
+  
     if (cartItem) {
       cartItem.quantity += quantity;
+      await this.cartItemRepository.save(cartItem);
     } else {
-      cartItem = this.cartItemRepository.create({
+      const newItem = this.cartItemRepository.create({
         cart,
         product,
         quantity,
       });
-
-      await this.cartItemRepository.save(cartItem);
+  
+      await this.cartItemRepository.save(newItem);
     }
-
-    return this.cartRepository.findOne({
+  
+    // 🔄 Recargamos el carrito actualizado
+    const updatedCart = await this.cartRepository.findOne({
       where: { id: cart.id },
       relations: ['items', 'items.product'],
     });
+  
+    if (!updatedCart) {
+      throw new InternalServerErrorException('Cart reload failed');
+    }
+  
+    // 💰 Cálculo de totales
+    const subtotal = updatedCart.items.reduce(
+      (acc, item) =>
+        acc + Number(item.product.price) * item.quantity,
+      0,
+    );
+  
+    const totalItems = updatedCart.items.reduce(
+      (acc, item) => acc + item.quantity,
+      0,
+    );
+  
+    return {
+      ...updatedCart,
+      subtotal: Number(subtotal.toFixed(2)),
+      totalItems,
+    };
   }
 
   async getActiveCart(userId: number) {
