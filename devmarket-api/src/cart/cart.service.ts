@@ -9,6 +9,7 @@ import { User } from '../users/entities/user.entity';
 import { Order } from '../orders/entities/order.entity';
 import { OrderItem } from '../orders/entities/order-item.entity';
 import { InternalServerErrorException } from '@nestjs/common/exceptions/internal-server-error.exception';
+import { BadRequestException } from '@nestjs/common/exceptions/bad-request.exception';
 
 @Injectable()
 export class CartService {
@@ -103,11 +104,10 @@ export class CartService {
     }
   
     // 💰 Cálculo de totales
-    const subtotal = updatedCart.items.reduce(
-      (acc, item) =>
-        acc + Number(item.product.price) * item.quantity,
-      0,
-    );
+   const subtotal = updatedCart.items.reduce(
+     (acc, item) => acc + item.quantity * Number(item.product.price),
+     0,
+   );
   
     const totalItems = updatedCart.items.reduce(
       (acc, item) => acc + item.quantity,
@@ -183,43 +183,63 @@ export class CartService {
   }
 
   async checkout(userId: number) {
+  
     const cart = await this.cartRepository.findOne({
-      where: { user: { id: userId }, isActive: true },
+      where: {
+        user: { id: userId },
+        isActive: true,
+      },
       relations: ['items', 'items.product', 'user'],
     });
   
-    if (!cart || cart.items.length === 0) {
-      throw new NotFoundException('Cart is empty');
+    if (!cart) {
+      throw new NotFoundException('Active cart not found');
+    }
+  
+    if (!cart.items || cart.items.length === 0) {
+      throw new BadRequestException('Cart is empty');
     }
   
     let total = 0;
   
-    const orderItems = cart.items.map((item) => {
-      const price = Number(item.product.price);
-      total += price * item.quantity;
+    const order = this.orderRepository.create({
+      user: cart.user,
+      total: 0,
+    });
   
-      return this.orderItemRepository.create({
+    await this.orderRepository.save(order);
+  
+    const orderItems: OrderItem[] = [];
+  
+    for (const item of cart.items) {
+  
+      const price = Number(item.product.price);
+      const subtotal = price * item.quantity;
+  
+      total += subtotal;
+  
+      const orderItem = this.orderItemRepository.create({
+        order: order,
         product: item.product,
         quantity: item.quantity,
         priceAtPurchase: price,
       });
-    });
   
-    const order = this.orderRepository.create({
-      user: cart.user,
-      items: orderItems,
-      total,
-    });
+      orderItems.push(orderItem);
+    }
+  
+    await this.orderItemRepository.save(orderItems);
+  
+    order.total = total;
   
     await this.orderRepository.save(order);
   
     cart.isActive = false;
     await this.cartRepository.save(cart);
   
-    return {
-      message: 'Checkout successful',
-      orderId: order.id,
-      total,
-    };
+    return this.orderRepository.findOne({
+      where: { id: order.id },
+      relations: ['items', 'items.product'],
+    });
   }
 }

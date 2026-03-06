@@ -9,6 +9,6 @@ export class OrdersController {
 
   @Get('me')
   async getMyOrders(@Request() req) {
-    return this.ordersService.getMyOrders(req.user.id);
+    return this.ordersService.getMyOrders(req.user.userId);
   }
 }
