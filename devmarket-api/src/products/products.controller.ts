@@ -10,13 +10,11 @@ import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
-import { use } from 'passport'; 
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @ApiTags('Products')
 @ApiBearerAuth('access-token')
-@UseGuards(JwtAuthGuard)
 @Controller('products')
 export class ProductsController {
 
@@ -27,11 +25,12 @@ export class ProductsController {
     return this.productsService.getExternalProducts();
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
   @ApiOperation({ summary: 'Sincronizar productos externos (Solo ADMIN)' })
   @ApiResponse({ status: 200, description: 'Productos sincronizados' })
   @ApiResponse({ status: 403, description: 'Acceso solo para administradores' })
   @Post('sync')
-  @Roles('ADMIN')
   async syncProducts() {
     return this.productsService.syncProducts();
   }
@@ -39,7 +38,7 @@ export class ProductsController {
   @Get()
   async getAllProducts(
     @Query('page') page: number = 1,
-    @Query('limit') limit: number = 5,
+    @Query('limit') limit: number = 20,
     @Query('category') category?: string,
     @Query('minPrice') minPrice?: number,
     @Query('maxPrice') maxPrice?: number,
@@ -61,7 +60,7 @@ export class ProductsController {
     return this.productsService.getProductById(Number(id));
   }
 
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN')
   @Post()
   @ApiOperation({ summary: 'Crear un nuevo producto' })
@@ -72,6 +71,7 @@ export class ProductsController {
     return this.productsService.createProduct(createProductDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async updateProduct(
     @Param('id') id: string,
@@ -80,7 +80,7 @@ export class ProductsController {
     return this.productsService.updateProduct(Number(id), updateProductDto);
   }
 
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN')
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar un producto por ID' })
