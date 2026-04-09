@@ -4,22 +4,24 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
+import Home from "./pages/Home";
+import Cart from "./pages/Cart";
 
-function Home() {
-  return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
-      <h1 className="text-white text-3xl font-bold">Home</h1>
-    </div>
-  );
-}
+// function Home() {
+//   return (
+//     <div className="max-w-6xl mx-auto px-4 py-12">
+//       <h1 className="text-white text-3xl font-bold">Home Hola</h1>
+//     </div>
+//   );
+// }
 
-function Cart() {
-  return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
-      <h1 className="text-white text-3xl font-bold">Carrito</h1>
-    </div>
-  );
-}
+// function Cart() {
+//   return (
+//     <div className="max-w-6xl mx-auto px-4 py-12">
+//       <h1 className="text-white text-3xl font-bold">Carrito</h1>
+//     </div>
+//   );
+// }
 
 function Orders() {
   return (
