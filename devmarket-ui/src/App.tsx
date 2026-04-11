@@ -6,6 +6,7 @@ import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
 import Home from "./pages/Home";
 import Cart from "./pages/Cart";
+import Orders from "./pages/Orders";
 
 // function Home() {
 //   return (
@@ -23,13 +24,13 @@ import Cart from "./pages/Cart";
 //   );
 // }
 
-function Orders() {
-  return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
-      <h1 className="text-white text-3xl font-bold">Pedidos</h1>
-    </div>
-  );
-}
+// function Orders() {
+//   return (
+//     <div className="max-w-6xl mx-auto px-4 py-12">
+//       <h1 className="text-white text-3xl font-bold">Pedidos</h1>
+//     </div>
+//   );
+// }
 
 function App() {
   return (

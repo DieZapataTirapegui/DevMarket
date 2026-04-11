@@ -68,6 +68,41 @@ export interface Translations {
     notFound: string;
     backToProducts: string;
   };
+  cart: {
+    title: string;
+    product: string;
+    products: string;
+    summary: string;
+    total: string;
+    checkout: string;
+    processing: string;
+    keepShopping: string;
+    remove: string;
+    emptyTitle: string;
+    emptyDesc: string;
+    viewProducts: string;
+    loginTitle: string;
+    loginDesc: string;
+    login: string;
+    successTitle: string;
+    successDesc: string;
+  };
+  orders: {
+    title: string;
+    order: string;
+    orders: string;
+    orderNum: string;
+    item: string;
+    items: string;
+    total: string;
+    emptyTitle: string;
+    emptyDesc: string;
+    browseProducts: string;
+    loginTitle: string;
+    loginDesc: string;
+    login: string;
+    errorMsg: string;
+  };
   login: {
     title: string;
     subtitle: string;
@@ -117,24 +152,24 @@ const translations: Record<Lang, Translations> = {
       logout: "Salir",
     },
     home: {
-      badge: "El marketplace para devs",
+      badge: "El marketplace para desarrolladores",
       title1: "Todo lo que",
-      titleHighlight: "necesitás",
+      titleHighlight: "necesitas",
       title2: ", en un solo lugar",
-      subtitle: "Explorá miles de productos, agregá al carrito y recibí en tu puerta. Simple, rápido y seguro.",
+      subtitle: "Explora miles de productos, agrega al carrito y recibe en tu puerta. Simple, rápido y seguro.",
       cta: "Ver productos",
       ctaRegister: "Crear cuenta gratis",
       statsProducts: "Productos",
       statsCategories: "Categorías",
       statsSafe: "Seguro",
       feature1Title: "Rápido y simple",
-      feature1Desc: "Comprá en segundos, sin complicaciones.",
+      feature1Desc: "Compra en segundos, sin complicaciones.",
       feature2Title: "Pagos seguros",
       feature2Desc: "Tu información siempre protegida.",
       feature3Title: "Envío express",
-      feature3Desc: "Recibí tu pedido donde estés.",
-      categoriesTitle: "Explorá por categoría",
-      categoriesSubtitle: "Encontrá lo que buscás",
+      feature3Desc: "Recibe tu pedido donde estés.",
+      categoriesTitle: "Explora por categoría",
+      categoriesSubtitle: "Encuentra lo que buscas",
       categoriesViewAll: "Ver todo",
       cat1: "Electrónica",
       cat2: "Ropa hombre",
@@ -145,7 +180,7 @@ const translations: Record<Lang, Translations> = {
       catCount3: "4 productos",
       catCount4: "6 productos",
       ctaFinalTitle: "¿Listo para empezar?",
-      ctaFinalDesc: "Creá tu cuenta gratis y empezá a comprar hoy mismo.",
+      ctaFinalDesc: "Crea tu cuenta gratis y empieza a comprar hoy mismo.",
       ctaFinalBtn: "Comenzar ahora",
     },
     products: {
@@ -158,7 +193,7 @@ const translations: Record<Lang, Translations> = {
       sortBy: "Ordenar por",
       sortAsc: "Precio: menor a mayor",
       sortDesc: "Precio: mayor a menor",
-      errorMsg: "No se pudieron cargar los productos. Verificá que el backend esté corriendo.",
+      errorMsg: "No se pudieron cargar los productos. Verifica que el backend esté funcionando.",
       emptyMsg: "No se encontraron productos para tu búsqueda.",
       clearFilters: "Limpiar filtros",
     },
@@ -167,27 +202,62 @@ const translations: Record<Lang, Translations> = {
       addToCart: "Agregar al carrito",
       adding: "Agregando...",
       added: "¡Agregado al carrito!",
-      loginRequired: "Necesitás",
+      loginRequired: "Necesitas",
       loginLink: "iniciar sesión",
       notFound: "Producto no encontrado.",
       backToProducts: "Volver a productos",
     },
+    cart: {
+      title: "Carrito",
+      product: "producto",
+      products: "productos",
+      summary: "Resumen",
+      total: "Total",
+      checkout: "Finalizar compra",
+      processing: "Procesando...",
+      keepShopping: "Seguir comprando",
+      remove: "Eliminar",
+      emptyTitle: "Tu carrito está vacío",
+      emptyDesc: "Agrega productos para empezar",
+      viewProducts: "Ver productos",
+      loginTitle: "Tu carrito te espera",
+      loginDesc: "Inicia sesión para ver tus productos",
+      login: "Ingresar",
+      successTitle: "¡Pedido realizado!",
+      successDesc: "Redirigiendo a tus pedidos...",
+    },
+    orders: {
+      title: "Mis pedidos",
+      order: "pedido",
+      orders: "pedidos",
+      orderNum: "Pedido",
+      item: "producto",
+      items: "productos",
+      total: "Total",
+      emptyTitle: "No tienes pedidos aún",
+      emptyDesc: "Cuando realices una compra, aparecerá aquí.",
+      browseProducts: "Ver productos",
+      loginTitle: "Inicia sesión para ver tus pedidos",
+      loginDesc: "Aquí encontrarás el historial de tus compras.",
+      login: "Ingresar",
+      errorMsg: "No se pudieron cargar los pedidos.",
+    },
     login: {
       title: "Bienvenido de vuelta",
-      subtitle: "Ingresá a tu cuenta de",
+      subtitle: "Inicia sesión en tu cuenta de",
       email: "Email",
       password: "Contraseña",
       emailPlaceholder: "tu@email.com",
       passwordPlaceholder: "••••••••",
       submit: "Ingresar",
       submitting: "Ingresando...",
-      noAccount: "¿No tenés cuenta?",
-      registerLink: "Registrate",
-      errorDefault: "Credenciales incorrectas. Intentá de nuevo.",
+      noAccount: "¿No tienes cuenta?",
+      registerLink: "Regístrate",
+      errorDefault: "Credenciales incorrectas. Intenta de nuevo.",
     },
     register: {
       title: "Crear cuenta",
-      subtitle: "Empezá a comprar en",
+      subtitle: "Empieza a comprar en",
       email: "Email",
       password: "Contraseña",
       confirmPassword: "Confirmar contraseña",
@@ -196,9 +266,9 @@ const translations: Record<Lang, Translations> = {
       confirmPlaceholder: "••••••••",
       submit: "Crear cuenta",
       submitting: "Creando cuenta...",
-      hasAccount: "¿Ya tenés cuenta?",
-      loginLink: "Ingresá",
-      errorDefault: "Error al registrarse. Intentá de nuevo.",
+      hasAccount: "¿Ya tienes cuenta?",
+      loginLink: "Inicia sesión",
+      errorDefault: "Error al registrarse. Intenta de nuevo.",
       errorPasswordMatch: "Las contraseñas no coinciden.",
       errorPasswordLength: "La contraseña debe tener al menos 6 caracteres.",
       strengthLabel: "Fuerza:",
@@ -220,7 +290,7 @@ const translations: Record<Lang, Translations> = {
       logout: "Logout",
     },
     home: {
-      badge: "The marketplace for devs",
+      badge: "The marketplace for developers",
       title1: "Everything you",
       titleHighlight: "need",
       title2: ", in one place",
@@ -274,6 +344,41 @@ const translations: Record<Lang, Translations> = {
       loginLink: "log in",
       notFound: "Product not found.",
       backToProducts: "Back to products",
+    },
+    cart: {
+      title: "Cart",
+      product: "product",
+      products: "products",
+      summary: "Summary",
+      total: "Total",
+      checkout: "Checkout",
+      processing: "Processing...",
+      keepShopping: "Keep shopping",
+      remove: "Remove",
+      emptyTitle: "Your cart is empty",
+      emptyDesc: "Add products to get started",
+      viewProducts: "Browse products",
+      loginTitle: "Your cart is waiting",
+      loginDesc: "Log in to see your products",
+      login: "Log in",
+      successTitle: "Order placed!",
+      successDesc: "Redirecting to your orders...",
+    },
+    orders: {
+      title: "My orders",
+      order: "order",
+      orders: "orders",
+      orderNum: "Order",
+      item: "item",
+      items: "items",
+      total: "Total",
+      emptyTitle: "No orders yet",
+      emptyDesc: "When you make a purchase, it will appear here.",
+      browseProducts: "Browse products",
+      loginTitle: "Log in to see your orders",
+      loginDesc: "Your purchase history will appear here.",
+      login: "Log in",
+      errorMsg: "Could not load orders.",
     },
     login: {
       title: "Welcome back",
@@ -377,6 +482,41 @@ const translations: Record<Lang, Translations> = {
       loginLink: "ログインが必要です",
       notFound: "商品が見つかりません。",
       backToProducts: "商品一覧に戻る",
+    },
+    cart: {
+      title: "カート",
+      product: "商品",
+      products: "商品",
+      summary: "注文概要",
+      total: "合計",
+      checkout: "購入手続きへ",
+      processing: "処理中...",
+      keepShopping: "買い物を続ける",
+      remove: "削除",
+      emptyTitle: "カートは空です",
+      emptyDesc: "商品を追加してください",
+      viewProducts: "商品を見る",
+      loginTitle: "カートが待っています",
+      loginDesc: "ログインして商品を確認してください",
+      login: "ログイン",
+      successTitle: "注文完了！",
+      successDesc: "注文ページに移動します...",
+    },
+    orders: {
+      title: "注文履歴",
+      order: "件の注文",
+      orders: "件の注文",
+      orderNum: "注文",
+      item: "商品",
+      items: "商品",
+      total: "合計",
+      emptyTitle: "注文がまだありません",
+      emptyDesc: "購入すると、ここに表示されます。",
+      browseProducts: "商品を見る",
+      loginTitle: "ログインして注文を確認",
+      loginDesc: "購入履歴がここに表示されます。",
+      login: "ログイン",
+      errorMsg: "注文を読み込めませんでした。",
     },
     login: {
       title: "おかえりなさい",
