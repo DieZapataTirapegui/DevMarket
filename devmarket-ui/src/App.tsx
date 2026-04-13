@@ -7,6 +7,7 @@ import ProductDetail from "./pages/ProductDetail";
 import Home from "./pages/Home";
 import Cart from "./pages/Cart";
 import Orders from "./pages/Orders";
+import AdminProducts from "./pages/admin/AdminProducts";
 
 // function Home() {
 //   return (
@@ -43,6 +44,7 @@ function App() {
         <Route path="/orders" element={<Orders />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/admin/products" element={<AdminProducts />} />
       </Route>
     </Routes>
   );

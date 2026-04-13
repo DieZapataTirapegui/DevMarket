@@ -35,7 +35,7 @@ export default function Login() {
       };
     
       setAuth(user, data.access_token);
-      navigate("/");
+      navigate(payload.role === "ADMIN" ? "/admin/products" : "/");
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { message?: string } } })?.response?.data
